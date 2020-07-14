@@ -1,31 +1,27 @@
-genres = ['classic', 'pop', 'classic', 'classic', 'pop']
-plays = [500, 600, 150, 800, 2500]
+import itertools
 
+def baseball_fun(x, y):
+    x = list(x)
+    y = list(y)
+    s = 0
+    b = 0  # 스트라이크, 볼
+    for i in range(3):
+        if x[i] in y:
+            if y.index(x[i]) == i:
+                s += 1
+            else:
+                b += 1
+    return [s, b]
 
-# [4, 1, 3, 0]
-def solution(genres, plays):
-    answer = []
-    dic_gen = {}
-    dic_son = {}
+def solution(baseball):
+    v = list(map(lambda x: str(x[0]), baseball))  # 질문하는 숫자
+    r = list(map(lambda x: [x[1], x[2]], baseball))  # 질문에 대한 답
 
-    for a in range(len(genres)):
-        if not genres[a] in dic_gen.keys():
-            dic_gen[genres[a]] = 0
-            dic_son[genres[a]] = []
-        dic_gen[genres[a]] += plays[a]
-        dic_son[genres[a]].append(a)
-    genres_rank = sorted(dic_gen.items(), key=lambda items: items[1], reverse=True)
+    all = list(itertools.permutations(range(1, 10), 3))  # 모든 가능한 수
+    all = list(map(lambda x: list(map(str, x)), all))  # change to str
 
-    for rank in genres_rank:
-        dic_result = {}
-        for a in dic_son[rank[0]]:
-            dic_result[a] = plays[a]
-        song_rank = sorted(dic_result.items(), key=lambda items: items[1], reverse=True)
+    cnt = 0  # 가능한 수
+    for x in all:
+        if [baseball_fun(x, y) for y in v] == r: cnt += 1
 
-        count = 0
-        for song in song_rank:
-            if count == 2:
-                break
-            answer.append(song[0])
-            count += 1
-    return answer
+    return cnt

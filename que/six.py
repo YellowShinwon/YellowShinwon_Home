@@ -20,7 +20,7 @@ def solution(pri):
 
         temp_list.append([now_num, now_val])
         last_val = now_val
-    print(f'answer: {answer}')
+    # print(f'answer: {answer}')
 
     for num, val in temp_list:
         answer[num] = temp_list[-1][0] - num
