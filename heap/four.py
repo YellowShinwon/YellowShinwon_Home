@@ -1,55 +1,51 @@
 # operations	= ['I 16','D 1']
 # return = [0,0]
-operations = ['I 7','I 6','I -5','D -1']
+operations = ['I 7','I 5','I -5','D -1']
 # return = [7,5]
 
 import heapq
 def solution(operations):
-    data = []
-    direction = -1
-    for element in operations:
-        command, code = element.split()
-        code = int(code)
+    queue = []
+    direction = -1    # 지금 min_heap 상태
+    for one_oper in operations:
+        command, number = one_oper.split()
+        number = int(number)
         if command == 'I':
-            heapq.heappush(data, code)
-        else:
-            try:
-                direction, data = delete_max_min(code, direction, data)
-            except(IndexError):
-                pass
-    try:
-        answer = return_max_min(direction, data)
-    except(IndexError):
-        answer = [0,0]
+            heapq.heappush(queue, number)
+        elif queue != []:
+            queue, direction = delete_max_min(number, direction, queue)
+
+    if queue == []:
+        return [0,0]
+    else:
+        answer = return_max_min(direction, queue)
     return answer
 
-def convert_max_min(data):
-    data = [-number for number in data]
-    heapq.heapify(data)
-    return data
-
-def delete_max_min(command, direction, data):
-    if data == []:
-        return direction
-    if command != direction:
-        data = convert_max_min(data)
-        heapq.heappop(data)
-        direction = command
+def delete_max_min(number, direction, queue):
+    if number == direction:
+        heapq.heappop(queue)
     else:
-        heapq.heappop(data)
-    return direction, data
+        queue = list(map(convert, queue))
+        heapq.heapify(queue)
+        heapq.heappop(queue)
+        direction = number
+    return queue, direction
 
-def return_max_min(direction, data):
-    if direction == 1:
-        max = (-1)*heapq.heappop(data)
-        data = convert_max_min(data)
-        min = heapq.heappop(data)
+def return_max_min(direction, queue):
+    if direction == -1:
+        min = heapq.heappop(queue)
+        queue = list(map(convert, queue))
+        heapq.heapify(queue)
+        max = (-1)*heapq.heappop(queue)
     else:
-        min = heapq.heappop(data)
-        data = convert_max_min(data)
-        max = (-1)*heapq.heappop(data)
-    return max, min
+        max = (-1)*heapq.heappop(queue)
+        queue = list(map(convert, queue))
+        heapq.heapify(queue)
+        min = heapq.heappop(queue)
+    return [max, min]
 
+def convert(data):
+    return (-1*data)
 
 hey = solution(operations)
 print(f'answer={hey}')

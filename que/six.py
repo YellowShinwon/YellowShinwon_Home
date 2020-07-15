@@ -1,52 +1,28 @@
 prices = [1,2,3,2,3]
 #answer = [4,3,1,1,0]
 
-def solution(pri):
-    last_val = 0
-    temp_list = []
-    data_length = len(pri)
-    answer = [0] * data_length
+from collections import deque
+def solution(prices):
+    length = len(prices)
+    answer = [0] * length
+    now_time = 0
 
-    for now_num in range(data_length):
-        now_val = pri[now_num]
-        if last_val > now_val:
-            while 1:
-                tnum, tval = temp_list[-1]
-                if tval > now_val:
-                    answer[tnum] = now_num - tnum
-                    temp_list.pop()
-                else:
-                    break
+    prices = deque(prices)
+    last_price = prices.popleft()
+    stack = [[last_price, now_time]]
 
-        temp_list.append([now_num, now_val])
-        last_val = now_val
-    # print(f'answer: {answer}')
+    for now_price in prices:
+        now_time += 1
+        while stack and stack[-1][0] > now_price:
+            pprice, ttime = stack.pop()
+            answer[ttime] = now_time - ttime
+        stack.append([now_price, now_time])
 
-    for num, val in temp_list:
-        answer[num] = temp_list[-1][0] - num
+    while stack:
+        pprice, ttime = stack.pop()
+        answer[ttime-1] = now_time - ttime
 
     return answer
 
 temp = solution(prices)
 print(temp)
-
-def solution_err1(pri): #run_time_error
-    last_val = 0
-    temp_list = []
-    answer = [0] * len(pri)
-    for now_num, now_val in enumerate(pri):
-        if last_val > now_val:
-            while 1:
-                tnum, tval = temp_list[-1]
-                if tval > now_val:
-                    answer[tnum] = now_num - tnum
-                    temp_list.pop()
-                else:
-                    break
-        temp_list.append([now_num, now_val])
-        last_val = now_val
-
-    for num, val in temp_list:
-        answer[num] = temp_list[-1][0] - num
-
-    return answer
